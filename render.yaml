@@ -1,0 +1,7 @@
+services:
+  - type: web_service
+    name: exammania-server
+    env: node
+    rootDir: server
+    buildCommand: npm install && npm run build:prod
+    startCommand: npm start
