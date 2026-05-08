@@ -77,13 +77,13 @@ export async function submitAttempt(attemptId: string, userId: string) {
   });
 }
 
-export async function getAttemptResult(attemptId: string, userId: string) {
+export async function getAttemptResult(attemptId: string, userId: string, isAdmin: boolean) {
   const attempt = await prisma.attempt.findUnique({
     where: { id: attemptId },
     include: { exam: { include: { questions: true, division: true, subject: true } }, answers: { include: { question: true } } },
   });
   if (!attempt) throw new AppError("Attempt not found", 404);
-  if (attempt.userId !== userId) throw new AppError("Forbidden", 403);
+  if (attempt.userId !== userId && !isAdmin) throw new AppError("Forbidden", 403);
   if (!attempt.completedAt) throw new AppError("Not submitted yet", 400);
   return attempt;
 }

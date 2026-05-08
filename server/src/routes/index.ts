@@ -73,7 +73,7 @@ attemptsRouter.post("/:id/submit", async (req: AuthRequest, res: Response) => {
 });
 
 attemptsRouter.get("/:id/result", async (req: AuthRequest, res: Response) => {
-  const result = await examSvc.getAttemptResult(req.params.id, req.user!.id);
+  const result = await examSvc.getAttemptResult(req.params.id, req.user!.id, req.user!.role === "ADMIN");
   res.json({ success: true, data: result });
 });
 
