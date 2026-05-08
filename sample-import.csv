@@ -1,0 +1,11 @@
+question,type,options,correct,marks
+What is the SI unit of electric current?,MCQ,Ampere|Volt|Ohm|Watt,0,1
+The speed of light in a vacuum is approximately 3×10⁸ m/s.,TRUE_FALSE,True|False,0,1
+Who discovered the neutron?,MCQ,J.J. Thomson|Ernest Rutherford|James Chadwick|Niels Bohr,2,1
+Newton's Second Law of Motion states that F = ma.,TRUE_FALSE,True|False,0,1
+State the law of conservation of energy.,SHORT_ANSWER,,energy cannot be created or destroyed,3
+What is the unit of resistance?,MCQ,Ampere|Volt|Ohm|Coulomb,2,1
+The acceleration due to gravity on Earth is approximately 9.8 m/s².,TRUE_FALSE,True|False,0,1
+What is Ohm's Law?,SHORT_ANSWER,,V = IR,2
+Which gas is most abundant in Earth's atmosphere?,MCQ,Oxygen|Nitrogen|Carbon Dioxide|Argon,1,1
+Define kinetic energy.,SHORT_ANSWER,,energy possessed by a body due to its motion,2

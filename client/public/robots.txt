@@ -1,0 +1,5 @@
+# ExamMania robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://exammania.vercel.app/sitemap.xml

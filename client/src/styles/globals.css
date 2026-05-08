@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --toast-bg: #ffffff;
+    --toast-color: #111827;
+  }
+
+  .dark {
+    --toast-bg: #1f2937;
+    --toast-color: #f9fafb;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+
+  /* Bangla font support */
+  :lang(bn) {
+    font-family: "Hind Siliguri", sans-serif;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8;
+  }
+}

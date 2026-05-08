@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+*.md
+cypress
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts

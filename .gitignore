@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+.next
+out
+build
+
+# Environment — NEVER commit .env to GitHub
+.env
+.env.local
+.env.*.local
+
+# .env.example is safe to commit (it has no real secrets)
+!.env.example
+
+# Testing
+coverage
+cypress/screenshots
+cypress/videos
+
+# Logs
+*.log
+logs
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
