@@ -99,11 +99,36 @@ adminRouter.use(authenticate, requireAdmin);
 
 const divSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional() });
 const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional() });
-const examSchema = z.object({ title: z.string().min(1), titlebn: z.string().optional(), slug: z.string().regex(/^[a-z0-9-]+$/), divisionId: z.string().optional(), subjectId: z.string(), timeLimitMin: z.number().int().min(1).max(300).optional(), randomize: z.boolean().optional(), published: z.boolean().optional() });
+const examSchema = z.object({
+  title: z.string().min(1),
+  titlebn: z.string().optional(),
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  divisionId: z.preprocess((value) => {
+    if (typeof value === "string" && value.trim() === "") return undefined;
+    return value;
+  }, z.string().optional()),
+  subjectId: z.string().min(1),
+  timeLimitMin: z.preprocess((value) => {
+    if (typeof value === "string" && value.trim() === "") return undefined;
+    return typeof value === "string" ? Number(value) : value;
+  }, z.number().int().min(1).max(300).optional()),
+  randomize: z.preprocess((value) => {
+    if (typeof value === "string") return value === "true";
+    return value;
+  }, z.boolean().optional()),
+  published: z.preprocess((value) => {
+    if (typeof value === "string") return value === "true";
+    return value;
+  }, z.boolean().optional()),
+});
 const qSchema = z.object({ order: z.number().int().min(1), type: z.nativeEnum(QuestionType), text: z.string().min(1), options: z.array(z.string()).optional(), correct: z.string().optional(), marks: z.number().int().min(1).optional() });
 
 adminRouter.get("/analytics", async (_req, res) => { res.json({ success: true, data: await adminSvc.getAnalytics() }); });
 adminRouter.get("/users", async (_req, res) => { res.json({ success: true, data: await prisma.user.findMany({ orderBy: { createdAt: "desc" }, include: { _count: { select: { attempts: true } } } }) }); });
+adminRouter.get("/subjects", async (_req, res) => {
+  const subjects = await prisma.subject.findMany({ orderBy: [{ isCommon: "asc" }, { name: "asc" }] });
+  res.json({ success: true, data: subjects });
+});
 adminRouter.get("/users/:id/history", async (req: AuthRequest, res: Response) => { const history = await examSvc.getUserHistory(req.user!.id, req.params.id, true); res.json({ success: true, data: history }); });
 
 adminRouter.post("/divisions", async (req: AuthRequest, res: Response) => { const d = divSchema.parse(req.body); const div = await adminSvc.createDivision(d); await adminSvc.auditLog(req.user!.id, "CREATE", "Division", div.id); res.status(201).json({ success: true, data: div }); });

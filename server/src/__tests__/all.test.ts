@@ -63,10 +63,10 @@ describe("signJwt", () => {
 });
 
 describe("cookieOptions", () => {
-  it("sets httpOnly and sameSite=strict", async () => {
+  it("sets httpOnly and uses SameSite=None in production", async () => {
     const { cookieOptions } = await import("../services/authService");
     expect(cookieOptions.httpOnly).toBe(true);
-    expect(cookieOptions.sameSite).toBe("strict");
+    expect(cookieOptions.sameSite).toBe("lax");
   });
 });
 

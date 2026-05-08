@@ -46,6 +46,7 @@ export const adminApi = {
   users: () => request<import("@/types").User[]>("/api/admin/users"),
   createDivision: (data: unknown) => request<import("@/types").Division>("/api/admin/divisions", { method: "POST", body: JSON.stringify(data) }),
   createSubject: (data: unknown) => request<import("@/types").Subject>("/api/admin/subjects", { method: "POST", body: JSON.stringify(data) }),
+  subjects: () => request<import("@/types").Subject[]>("/api/admin/subjects"),
   createExam: (data: unknown) => request<import("@/types").Exam>("/api/admin/exams", { method: "POST", body: JSON.stringify(data) }),
   updateExam: (id: string, data: unknown) => request<import("@/types").Exam>(`/api/admin/exams/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteExam: (id: string) => request<null>(`/api/admin/exams/${id}`, { method: "DELETE" }),

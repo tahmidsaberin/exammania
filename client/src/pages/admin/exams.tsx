@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Layout from "@/components/Layout";
 import { Button, Modal, Skeleton, Badge } from "@/components/ui";
-import { adminApi, divisionsApi, examsApi } from "@/lib/api";
+import { adminApi, divisionsApi, examsApi, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { Exam, Division, Subject } from "@/types";
 
@@ -22,7 +22,7 @@ interface ExamFormData {
   titlebn: string;
   slug: string;
   subjectId: string;
-  divisionId: string;
+  divisionId?: string;
   timeLimitMin: number;
   randomize: boolean;
   published: boolean;
@@ -36,11 +36,7 @@ const AdminExamsPage: NextPage = () => {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const { data: divisions } = useSWR<Division[]>("divisions", divisionsApi.list);
-  const { data: subjectData } = useSWR("all-subjects", () =>
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`, {
-      credentials: "include",
-    }).then(() => [] as Subject[])
-  );
+  const { data: subjects } = useSWR<Subject[]>("admin/subjects", adminApi.subjects);
 
   const { register, handleSubmit, reset, formState: { isSubmitting } } =
     useForm<ExamFormData>();
@@ -66,8 +62,12 @@ const AdminExamsPage: NextPage = () => {
       reset();
       setShowCreate(false);
       mutate("admin/exams");
-    } catch {
-      toast.error("Failed to create exam.");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        toast.error(`Failed to create exam: ${err.message}`);
+      } else {
+        toast.error("Failed to create exam.");
+      }
     }
   };
 
@@ -219,14 +219,29 @@ const AdminExamsPage: NextPage = () => {
           </div>
           <div>
             <label htmlFor="subjectId" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Subject ID *
+              Subject *
             </label>
-            <input
+            <select
               id="subjectId"
               {...register("subjectId", { required: true })}
-              placeholder="CUID of subject"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            />
+              defaultValue=""
+              disabled={!subjects?.length}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="" disabled>
+                {subjects ? "Select a subject" : "Loading subjects..."}
+              </option>
+              {subjects?.map((subject) => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.name}{subject.isCommon ? " (Common)" : ""}
+                </option>
+              ))}
+            </select>
+            {subjects && !subjects.length && (
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                No subjects available. Create subjects first.
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

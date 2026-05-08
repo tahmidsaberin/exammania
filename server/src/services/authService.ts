@@ -40,7 +40,7 @@ export function signJwt(user: { id: string; email: string; role: string }): stri
 export const cookieOptions = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  sameSite: "strict" as const,
+  sameSite: env.NODE_ENV === "production" ? "none" as const : "lax" as const,
   maxAge: 24 * 60 * 60 * 1000,
   path: "/",
 };
