@@ -20,6 +20,7 @@ const ResultPage: NextPage = () => {
   const router = useRouter();
   const attemptId = Array.isArray(router.query.attemptId) ? router.query.attemptId[0] : router.query.attemptId;
   const { user } = useAuth();
+  const [selectedFilter, setSelectedFilter] = useState<"all" | "correct" | "incorrect" | "unanswered">("all");
 
   const { data: result, isLoading, error } = useSWR<AttemptResult>(
     attemptId ? `result/${attemptId}` : null,
@@ -68,8 +69,6 @@ const ResultPage: NextPage = () => {
   const ownerName = !isOwnResult && user?.role === "ADMIN"
     ? adminUsers?.find((u) => u.id === result.userId)?.name
     : undefined;
-
-  const [selectedFilter, setSelectedFilter] = useState<"all" | "correct" | "incorrect" | "unanswered">("all");
 
   const filteredQuestions = result.exam.questions.filter((question) => {
     const answer = result.answers.find((a) => a.questionId === question.id);
