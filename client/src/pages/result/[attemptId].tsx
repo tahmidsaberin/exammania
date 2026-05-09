@@ -3,20 +3,22 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import dynamic from "next/dynamic";
 import useSWR from "swr";
 import Link from "next/link";
 import Layout from "@/components/Layout";
-import ResultSummary from "@/components/ResultSummary";
 import QuestionCard from "@/components/QuestionCard";
 import { Button, Skeleton } from "@/components/ui";
 import { adminApi, attemptsApi, usersApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { AttemptResult, Attempt, User } from "@/types";
 
+const ResultSummary = dynamic(() => import("@/components/ResultSummary"), { ssr: false });
+
 const ResultPage: NextPage = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { attemptId } = router.query as { attemptId: string };
+  const attemptId = Array.isArray(router.query.attemptId) ? router.query.attemptId[0] : router.query.attemptId;
   const { user } = useAuth();
 
   const { data: result, isLoading, error } = useSWR<AttemptResult>(
