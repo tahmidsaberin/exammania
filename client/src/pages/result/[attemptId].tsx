@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import Link from "next/link";
@@ -8,9 +9,9 @@ import Layout from "@/components/Layout";
 import ResultSummary from "@/components/ResultSummary";
 import QuestionCard from "@/components/QuestionCard";
 import { Button, Skeleton } from "@/components/ui";
-import { attemptsApi, usersApi } from "@/lib/api";
+import { adminApi, attemptsApi, usersApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import type { AttemptResult, Attempt } from "@/types";
+import type { AttemptResult, Attempt, User } from "@/types";
 
 const ResultPage: NextPage = () => {
   const { t } = useTranslation();
@@ -24,8 +25,13 @@ const ResultPage: NextPage = () => {
   );
 
   const { data: history } = useSWR<Attempt[]>(
-    user ? `history/${user.id}` : null,
-    () => usersApi.history(user!.id)
+    result?.userId ? `history/${result.userId}` : null,
+    () => usersApi.history(result!.userId)
+  );
+
+  const { data: adminUsers } = useSWR<User[]>(
+    user?.role === "ADMIN" ? "admin/users-list" : null,
+    () => adminApi.users()
   );
 
   if (isLoading) {
@@ -56,11 +62,26 @@ const ResultPage: NextPage = () => {
   const examSlug = result.exam?.slug;
   const subjectSlug = result.exam?.subject?.slug;
 
+  const isOwnResult = user?.id === result.userId;
+  const ownerName = !isOwnResult && user?.role === "ADMIN"
+    ? adminUsers?.find((u) => u.id === result.userId)?.name
+    : undefined;
+
+  const [selectedFilter, setSelectedFilter] = useState<"all" | "correct" | "incorrect" | "unanswered">("all");
+
+  const filteredQuestions = result.exam.questions.filter((question) => {
+    const answer = result.answers.find((a) => a.questionId === question.id);
+    if (selectedFilter === "correct") return answer?.isCorrect;
+    if (selectedFilter === "incorrect") return answer && !answer.isCorrect && !!answer.answer;
+    if (selectedFilter === "unanswered") return !answer?.answer;
+    return true;
+  });
+
   return (
     <Layout>
       <Head>
         <title>
-          {t("result.title")} — {result.exam?.title} — {t("common.appName")}
+          {ownerName ? t("result.ownerTitle", { name: ownerName }) : t("result.title")} — {result.exam?.title} — {t("common.appName")}
         </title>
         <meta name="description" content={`Exam result for ${result.exam?.title}`} />
       </Head>
@@ -68,7 +89,7 @@ const ResultPage: NextPage = () => {
       <div className="container-page">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            {t("result.title")}
+            {ownerName ? t("result.ownerTitle", { name: ownerName }) : t("result.title")}
           </h1>
           <div className="flex gap-3">
             {subjectSlug && (
@@ -76,7 +97,7 @@ const ResultPage: NextPage = () => {
                 <Button variant="secondary">{t("result.backToSubject")}</Button>
               </Link>
             )}
-            {examSlug && (
+            {examSlug && isOwnResult && (
               <Link href={`/exam/${examSlug}`}>
                 <Button>{t("result.retake")}</Button>
               </Link>
@@ -85,7 +106,13 @@ const ResultPage: NextPage = () => {
         </div>
 
         {/* Score summary + chart */}
-        <ResultSummary result={result} history={history} />
+        <ResultSummary
+          result={result}
+          history={history}
+          ownerName={ownerName}
+          selectedFilter={selectedFilter}
+          onFilterChange={setSelectedFilter}
+        />
 
         {/* Per-question review */}
         <section className="mt-10" aria-labelledby="review-heading">
@@ -95,20 +122,31 @@ const ResultPage: NextPage = () => {
           >
             Question Review
           </h2>
+          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+            {selectedFilter === "all"
+              ? t("result.showingAll")
+              : t(`result.showing${selectedFilter.charAt(0).toUpperCase() + selectedFilter.slice(1)}`)}
+          </p>
           <div className="space-y-6">
-            {result.exam.questions.map((question) => {
-              const aa = result.answers.find((a) => a.questionId === question.id);
-              return (
-                <QuestionCard
-                  key={question.id}
-                  question={question}
-                  answer={aa?.answer ?? undefined}
-                  onChange={() => {}}
-                  showResult
-                  correctAnswer={question.correct ?? undefined}
-                />
-              );
-            })}
+            {filteredQuestions.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-gray-300 bg-white p-6 text-center text-gray-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                {t("result.noMatchingQuestions")}
+              </p>
+            ) : (
+              filteredQuestions.map((question) => {
+                const aa = result.answers.find((a) => a.questionId === question.id);
+                return (
+                  <QuestionCard
+                    key={question.id}
+                    question={question}
+                    answer={aa?.answer ?? undefined}
+                    onChange={() => {}}
+                    showResult
+                    correctAnswer={question.correct ?? undefined}
+                  />
+                );
+              })
+            )}
           </div>
         </section>
       </div>

@@ -75,7 +75,12 @@ export default function QuestionCard({
                       checked={isSelected}
                       onChange={() => !showResult && onChange(val)}
                       disabled={showResult}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                      className={clsx(
+                        "h-4 w-4 focus:ring-primary-500",
+                        showResult && isThisCorrect && "accent-green-500",
+                        showResult && isSelected && !isThisCorrect && "accent-red-500",
+                        !showResult && "accent-primary-600"
+                      )}
                       aria-label={opt}
                     />
                     <span className="text-sm text-gray-800 dark:text-gray-200">{opt}</span>

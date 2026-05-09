@@ -30,12 +30,23 @@ ChartJS.register(
   Filler
 );
 
+type ResultFilter = "all" | "correct" | "incorrect" | "unanswered";
+
 interface ResultSummaryProps {
   result: AttemptResult;
   history?: Attempt[];
+  ownerName?: string;
+  selectedFilter?: ResultFilter;
+  onFilterChange?: (filter: ResultFilter) => void;
 }
 
-export default function ResultSummary({ result, history }: ResultSummaryProps) {
+export default function ResultSummary({
+  result,
+  history,
+  ownerName,
+  selectedFilter = "all",
+  onFilterChange,
+}: ResultSummaryProps) {
   const { t } = useTranslation();
 
   const pct = result.totalScore > 0
@@ -97,7 +108,7 @@ export default function ResultSummary({ result, history }: ResultSummaryProps) {
           id="result-heading"
           className="mb-6 text-2xl font-bold text-gray-900 dark:text-white"
         >
-          {t("result.title")}
+          {ownerName ? t("result.ownerTitle", { name: ownerName }) : t("result.title")}
         </h2>
 
         {/* Big score */}
@@ -128,21 +139,64 @@ export default function ResultSummary({ result, history }: ResultSummaryProps) {
 
         {/* Stats row */}
         <div className="mt-6 grid grid-cols-3 gap-4">
-          <div className="flex flex-col items-center rounded-xl bg-green-50 p-4 dark:bg-green-900/20">
-            <CheckCircleIcon className="h-8 w-8 text-green-500" aria-hidden="true" />
-            <span className="mt-1 text-2xl font-bold text-green-700 dark:text-green-400">{correct}</span>
-            <span className="text-xs text-green-600 dark:text-green-500">{t("result.correct")}</span>
-          </div>
-          <div className="flex flex-col items-center rounded-xl bg-red-50 p-4 dark:bg-red-900/20">
-            <XCircleIcon className="h-8 w-8 text-red-500" aria-hidden="true" />
-            <span className="mt-1 text-2xl font-bold text-red-700 dark:text-red-400">{wrong}</span>
-            <span className="text-xs text-red-600 dark:text-red-500">{t("result.incorrect")}</span>
-          </div>
-          <div className="flex flex-col items-center rounded-xl bg-gray-50 p-4 dark:bg-gray-700/50">
-            <MinusCircleIcon className="h-8 w-8 text-gray-400" aria-hidden="true" />
-            <span className="mt-1 text-2xl font-bold text-gray-600 dark:text-gray-300">{unanswered}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{t("result.unanswered")}</span>
-          </div>
+          {[
+            {
+              key: "correct" as const,
+              title: t("result.correct"),
+              count: correct,
+              icon: <CheckCircleIcon className="h-8 w-8 text-green-500" aria-hidden="true" />,
+              className: "bg-green-50 dark:bg-green-900/20",
+              selectedClass: "ring-2 ring-green-500/40",
+            },
+            {
+              key: "incorrect" as const,
+              title: t("result.incorrect"),
+              count: wrong,
+              icon: <XCircleIcon className="h-8 w-8 text-red-500" aria-hidden="true" />,
+              className: "bg-red-50 dark:bg-red-900/20",
+              selectedClass: "ring-2 ring-red-500/40",
+            },
+            {
+              key: "unanswered" as const,
+              title: t("result.unanswered"),
+              count: unanswered,
+              icon: <MinusCircleIcon className="h-8 w-8 text-gray-400" aria-hidden="true" />,
+              className: "bg-gray-50 dark:bg-gray-700/50",
+              selectedClass: "ring-2 ring-slate-400/40",
+            },
+          ].map((item) => {
+            const isActive = selectedFilter === item.key;
+            const Card = onFilterChange ? (
+              <button
+                type="button"
+                key={item.key}
+                onClick={() => onFilterChange(item.key === selectedFilter ? "all" : item.key)}
+                className={clsx(
+                  "flex flex-col items-center rounded-xl p-4 transition-all",
+                  item.className,
+                  isActive && item.selectedClass,
+                  onFilterChange && "hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-400"
+                )}
+              >
+                {item.icon}
+                <span className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{item.count}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-300">{item.title}</span>
+              </button>
+            ) : (
+              <div
+                key={item.key}
+                className={clsx(
+                  "flex flex-col items-center rounded-xl p-4",
+                  item.className
+                )}
+              >
+                {item.icon}
+                <span className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{item.count}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-300">{item.title}</span>
+              </div>
+            );
+            return Card;
+          })}
         </div>
       </section>
 

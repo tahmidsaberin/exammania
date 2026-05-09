@@ -8,6 +8,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   CLIENT_URL: z.string().url().default("http://localhost:3000"),
+  CLIENT_URLS: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
