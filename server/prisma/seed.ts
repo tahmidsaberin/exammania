@@ -4,28 +4,117 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Seeding…");
 
-  const science = await prisma.division.upsert({ where: { slug: "science" }, update: {}, create: { slug: "science", name: "Science", namebn: "বিজ্ঞান" } });
-  const commerce = await prisma.division.upsert({ where: { slug: "commerce" }, update: {}, create: { slug: "commerce", name: "Commerce", namebn: "বাণিজ্য" } });
-  await prisma.division.upsert({ where: { slug: "arts" }, update: {}, create: { slug: "arts", name: "Arts", namebn: "মানবিক" } });
+  const sscScience = await prisma.division.upsert({
+    where: { slug: "ssc-science" },
+    update: {},
+    create: { slug: "ssc-science", name: "Science", namebn: "বিজ্ঞান", level: "SSC" },
+  });
+  const sscCommerce = await prisma.division.upsert({
+    where: { slug: "ssc-commerce" },
+    update: {},
+    create: { slug: "ssc-commerce", name: "Commerce", namebn: "বাণিজ্য", level: "SSC" },
+  });
+  const sscArts = await prisma.division.upsert({
+    where: { slug: "ssc-arts" },
+    update: {},
+    create: { slug: "ssc-arts", name: "Arts", namebn: "মানবিক", level: "SSC" },
+  });
 
-  // Common subjects
-  await prisma.subject.upsert({ where: { slug: "english" }, update: {}, create: { slug: "english", name: "English", namebn: "ইংরেজি", isCommon: true } });
-  await prisma.subject.upsert({ where: { slug: "bangla" }, update: {}, create: { slug: "bangla", name: "Bangla", namebn: "বাংলা", isCommon: true } });
-  await prisma.subject.upsert({ where: { slug: "ict" }, update: {}, create: { slug: "ict", name: "ICT", namebn: "তথ্য ও যোগাযোগ প্রযুক্তি", isCommon: true } });
+  const hscScience = await prisma.division.upsert({
+    where: { slug: "hsc-science" },
+    update: {},
+    create: { slug: "hsc-science", name: "Science", namebn: "বিজ্ঞান", level: "HSC" },
+  });
+  const hscCommerce = await prisma.division.upsert({
+    where: { slug: "hsc-commerce" },
+    update: {},
+    create: { slug: "hsc-commerce", name: "Commerce", namebn: "বাণিজ্য", level: "HSC" },
+  });
+  const hscArts = await prisma.division.upsert({
+    where: { slug: "hsc-arts" },
+    update: {},
+    create: { slug: "hsc-arts", name: "Arts", namebn: "মানবিক", level: "HSC" },
+  });
 
-  // Science subjects
-  const physics = await prisma.subject.upsert({ where: { slug: "physics" }, update: {}, create: { slug: "physics", name: "Physics", namebn: "পদার্থবিজ্ঞান", divisionId: science.id } });
-  await prisma.subject.upsert({ where: { slug: "chemistry" }, update: {}, create: { slug: "chemistry", name: "Chemistry", namebn: "রসায়ন", divisionId: science.id } });
-  await prisma.subject.upsert({ where: { slug: "biology" }, update: {}, create: { slug: "biology", name: "Biology", namebn: "জীববিজ্ঞান", divisionId: science.id } });
+  // SSC common subjects
+  await prisma.subject.upsert({
+    where: { slug: "bangla-ssc" },
+    update: {},
+    create: { slug: "bangla-ssc", name: "Bangla", namebn: "বাংলা", isCommon: true, level: "SSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "english-ssc" },
+    update: {},
+    create: { slug: "english-ssc", name: "English", namebn: "ইংরেজি", isCommon: true, level: "SSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "general-math-ssc" },
+    update: {},
+    create: { slug: "general-math-ssc", name: "General Math", namebn: "সাধারণ গণিত", isCommon: true, level: "SSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "ict-ssc" },
+    update: {},
+    create: { slug: "ict-ssc", name: "ICT", namebn: "তথ্য ও যোগাযোগ প্রযুক্তি", isCommon: true, level: "SSC" },
+  });
 
-  // Commerce subjects
-  await prisma.subject.upsert({ where: { slug: "accounting" }, update: {}, create: { slug: "accounting", name: "Accounting", namebn: "হিসাববিজ্ঞান", divisionId: commerce.id } });
-  await prisma.subject.upsert({ where: { slug: "business-studies" }, update: {}, create: { slug: "business-studies", name: "Business Studies", namebn: "ব্যবসায় শিক্ষা", divisionId: commerce.id } });
+  // HSC common subjects
+  await prisma.subject.upsert({
+    where: { slug: "bangla-1st-paper" },
+    update: {},
+    create: { slug: "bangla-1st-paper", name: "Bangla 1st Paper", namebn: "বাংলা ১ম পত্র", isCommon: true, level: "HSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "bangla-2nd-paper" },
+    update: {},
+    create: { slug: "bangla-2nd-paper", name: "Bangla 2nd Paper", namebn: "বাংলা ২য় পত্র", isCommon: true, level: "HSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "english-1st-paper" },
+    update: {},
+    create: { slug: "english-1st-paper", name: "English 1st Paper", namebn: "ইংরেজি ১ম পত্র", isCommon: true, level: "HSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "english-2nd-paper" },
+    update: {},
+    create: { slug: "english-2nd-paper", name: "English 2nd Paper", namebn: "ইংরেজি ২য় পত্র", isCommon: true, level: "HSC" },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "ict-hsc" },
+    update: {},
+    create: { slug: "ict-hsc", name: "ICT", namebn: "তথ্য ও যোগাযোগ প্রযুক্তি", isCommon: true, level: "HSC" },
+  });
+
+  // SSC Science subjects
+  const physics = await prisma.subject.upsert({
+    where: { slug: "physics-ssc" },
+    update: {},
+    create: { slug: "physics-ssc", name: "Physics", namebn: "পদার্থবিজ্ঞান", divisionId: sscScience.id },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "chemistry-ssc" },
+    update: {},
+    create: { slug: "chemistry-ssc", name: "Chemistry", namebn: "রসায়ন", divisionId: sscScience.id },
+  });
+  await prisma.subject.upsert({
+    where: { slug: "biology-ssc" },
+    update: {},
+    create: { slug: "biology-ssc", name: "Biology", namebn: "জীববিজ্ঞান", divisionId: sscScience.id },
+  });
 
   // Sample exam
   const exam = await prisma.exam.upsert({
     where: { slug: "physics-chapter-1-mcq" }, update: {},
-    create: { title: "Physics Chapter 1 MCQ", titlebn: "পদার্থবিজ্ঞান অধ্যায় ১", slug: "physics-chapter-1-mcq", divisionId: science.id, subjectId: physics.id, timeLimitMin: 30, randomize: true, published: true },
+    create: {
+      title: "Physics Chapter 1 MCQ",
+      titlebn: "পদার্থবিজ্ঞান অধ্যায় ১",
+      slug: "physics-chapter-1-mcq",
+      divisionId: sscScience.id,
+      subjectId: physics.id,
+      timeLimitMin: 30,
+      randomize: true,
+      published: true,
+    },
   });
 
   const questions = [

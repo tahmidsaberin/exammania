@@ -51,20 +51,21 @@ export default function QuestionCard({
               {(question.options as string[]).map((opt, idx) => {
                 const val = String(idx);
                 const isSelected = answer === val;
-                const isThisCorrect = showResult && correctAnswer === val;
+                const isCorrectOption = showResult && correctAnswer === val;
+                const isSelectedIncorrect = isSelected && !isCorrectOption && showResult;
 
                 return (
                   <label
                     key={idx}
                     className={clsx(
                       "flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-all",
-                      isThisCorrect &&
+                      isCorrectOption &&
                         "border-green-400 bg-green-50 dark:border-green-600 dark:bg-green-900/20",
-                      isSelected && !isThisCorrect && showResult &&
+                      isSelectedIncorrect &&
                         "border-red-400 bg-red-50 dark:border-red-600 dark:bg-red-900/20",
                       isSelected && !showResult &&
                         "border-primary-400 bg-primary-50 dark:border-primary-600 dark:bg-primary-900/20",
-                      !isSelected && !isThisCorrect &&
+                      !isSelected && !isCorrectOption &&
                         "border-gray-200 hover:border-primary-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-primary-700 dark:hover:bg-gray-700/50"
                     )}
                   >
@@ -75,21 +76,30 @@ export default function QuestionCard({
                       checked={isSelected}
                       onChange={() => !showResult && onChange(val)}
                       disabled={showResult}
-                      className={clsx(
-                        "h-4 w-4 focus:ring-primary-500",
-                        showResult && isThisCorrect && "accent-green-500",
-                        showResult && isSelected && !isThisCorrect && "accent-red-500",
-                        !showResult && "accent-primary-600"
-                      )}
+                      className="sr-only peer"
                       aria-label={opt}
                     />
+                    <span
+                      className={clsx(
+                        "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors",
+                        isCorrectOption && "border-green-500 bg-green-500",
+                        isSelectedIncorrect && "border-red-500 bg-red-500",
+                        isSelected && !showResult && "border-primary-600 bg-primary-600",
+                        !isSelected && !showResult && "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800",
+                        !showResult && "peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500"
+                      )}
+                    >
+                      {(isSelected || isCorrectOption) && (
+                        <span className="h-2.5 w-2.5 rounded-full bg-white" />
+                      )}
+                    </span>
                     <span className="text-sm text-gray-800 dark:text-gray-200">{opt}</span>
-                    {isThisCorrect && (
+                    {isCorrectOption && (
                       <span className="ml-auto text-xs font-semibold text-green-600 dark:text-green-400">
                         ✓ Correct
                       </span>
                     )}
-                    {isSelected && !isThisCorrect && showResult && (
+                    {isSelectedIncorrect && (
                       <span className="ml-auto text-xs font-semibold text-red-600 dark:text-red-400">
                         ✗ Wrong
                       </span>

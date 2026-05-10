@@ -24,7 +24,7 @@ const ResultPage: NextPage = () => {
 
   const { data: result, isLoading, error } = useSWR<AttemptResult>(
     attemptId ? `result/${attemptId}` : null,
-    () => attemptsApi.result(attemptId)
+    () => attemptsApi.result(attemptId as string)
   );
 
   const { data: history } = useSWR<Attempt[]>(

@@ -17,13 +17,9 @@ const DIVISION_ICONS: Record<string, React.ElementType> = {
   arts: BookOpenIcon,
 };
 
-const DIVISION_COLORS: Record<string, string> = {
-  science:
-    "from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600",
-  commerce:
-    "from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600",
-  arts:
-    "from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600",
+const LEVEL_GRADIENTS: Record<string, string> = {
+  HSC: "from-emerald-500 via-lime-500 to-emerald-600 hover:from-emerald-600 hover:to-lime-600",
+  SSC: "from-violet-500 via-fuchsia-500 to-purple-500 hover:from-violet-600 hover:to-purple-600",
 };
 
 interface DivisionCardProps {
@@ -33,7 +29,7 @@ interface DivisionCardProps {
 export default function DivisionCard({ division }: DivisionCardProps) {
   const { i18n } = useTranslation();
   const Icon = DIVISION_ICONS[division.slug] ?? BookOpenIcon;
-  const gradient = DIVISION_COLORS[division.slug] ?? "from-gray-500 to-gray-600";
+  const gradient = LEVEL_GRADIENTS[division.level] ?? "from-gray-500 to-gray-600 hover:from-gray-500 hover:to-gray-600";
   const displayName = i18n.language === "bn" && division.namebn ? division.namebn : division.name;
 
   return (

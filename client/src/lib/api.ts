@@ -19,7 +19,14 @@ export const authApi = {
 };
 
 export const divisionsApi = {
-  list: () => request<import("@/types").Division[]>("/api/divisions"),
+  list: (...args: unknown[]) => {
+    const rawLevel = args[0];
+    const level = typeof rawLevel === "string" && ["SSC", "HSC"].includes(rawLevel.toUpperCase())
+      ? rawLevel.toUpperCase()
+      : undefined;
+    return request<import("@/types").Division[]>(`/api/divisions${level ? `?level=${encodeURIComponent(level)}` : ""}`);
+  },
+  byLevel: (level: string) => request<import("@/types").Division[]>(`/api/divisions?level=${encodeURIComponent(level)}`),
   subjects: (slug: string) => request<{ division: import("@/types").Division; subjects: import("@/types").Subject[] }>(`/api/divisions/${slug}/subjects`),
 };
 
@@ -45,8 +52,13 @@ export const adminApi = {
   analytics: () => request<import("@/types").AnalyticsDashboard>("/api/admin/analytics"),
   users: () => request<import("@/types").User[]>("/api/admin/users"),
   createDivision: (data: unknown) => request<import("@/types").Division>("/api/admin/divisions", { method: "POST", body: JSON.stringify(data) }),
+  listDivisions: () => request<import("@/types").Division[]>("/api/divisions"),
+  updateDivision: (id: string, data: unknown) => request<import("@/types").Division>(`/api/admin/divisions/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteDivision: (id: string) => request<null>(`/api/admin/divisions/${id}`, { method: "DELETE" }),
   createSubject: (data: unknown) => request<import("@/types").Subject>("/api/admin/subjects", { method: "POST", body: JSON.stringify(data) }),
   subjects: () => request<import("@/types").Subject[]>("/api/admin/subjects"),
+  updateSubject: (id: string, data: unknown) => request<import("@/types").Subject>(`/api/admin/subjects/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteSubject: (id: string) => request<null>(`/api/admin/subjects/${id}`, { method: "DELETE" }),
   createExam: (data: unknown) => request<import("@/types").Exam>("/api/admin/exams", { method: "POST", body: JSON.stringify(data) }),
   updateExam: (id: string, data: unknown) => request<import("@/types").Exam>(`/api/admin/exams/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteExam: (id: string) => request<null>(`/api/admin/exams/${id}`, { method: "DELETE" }),

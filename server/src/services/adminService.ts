@@ -1,4 +1,4 @@
-import { PrismaClient, QuestionType } from "@prisma/client";
+import { PrismaClient, QuestionType, AcademicLevel, Prisma } from "@prisma/client";
 import { parse } from "csv-parse/sync";
 import { AppError } from "../middleware/errorHandler";
 import { logger } from "../utils/logger";
@@ -11,19 +11,57 @@ export async function auditLog(userId: string, action: string, entityType: strin
   logger.info(`[ADMIN] ${action}`, { userId, entityType, entityId });
 }
 
-export const createDivision = (data: { slug: string; name: string; namebn?: string }) =>
+export const createDivision = (data: { slug: string; name: string; namebn?: string; level: AcademicLevel }) =>
   prisma.division.create({ data });
-export const updateDivision = (id: string, data: { name?: string; namebn?: string }) =>
+export const updateDivision = (id: string, data: { name?: string; namebn?: string; level?: AcademicLevel }) =>
   prisma.division.update({ where: { id }, data });
 export const deleteDivision = (id: string) => prisma.division.delete({ where: { id } });
 
-export const createSubject = (data: { slug: string; name: string; namebn?: string; divisionId?: string; isCommon?: boolean }) =>
-  prisma.subject.create({ data });
-export const updateSubject = (id: string, data: object) => prisma.subject.update({ where: { id }, data });
+export const createSubject = async (data: {
+  slug: string;
+  name: string;
+  namebn?: string;
+  divisionId?: string;
+  isCommon?: boolean;
+  level?: AcademicLevel;
+}) => {
+  const payload: Prisma.SubjectCreateInput = {
+    slug: data.slug,
+    name: data.name,
+    namebn: data.namebn,
+    divisionId: data.divisionId,
+    isCommon: data.isCommon,
+    level: data.level,
+  } as Prisma.SubjectCreateInput;
+
+  if (data.divisionId && !data.level) {
+    const division = await prisma.division.findUnique({ where: { id: data.divisionId } });
+    if (division) payload.level = division.level as AcademicLevel;
+  }
+  if (data.isCommon && !payload.level) {
+    throw new AppError("Common subjects must have an academic level", 400);
+  }
+  return prisma.subject.create({ data: payload });
+};
+export const updateSubject = async (
+  id: string,
+  data: { divisionId?: string; isCommon?: boolean; level?: AcademicLevel; [key: string]: unknown }
+) => {
+  const payload = { ...data } as Prisma.SubjectUpdateInput;
+  if (data.divisionId && data.level === undefined) {
+    const division = await prisma.division.findUnique({ where: { id: data.divisionId } });
+    if (division) payload.level = division.level as AcademicLevel;
+  }
+  if (data.isCommon && payload.level === undefined) {
+    throw new AppError("Common subjects must have an academic level", 400);
+  }
+  return prisma.subject.update({ where: { id }, data: payload });
+};
 
 export const createExam = (data: object) => prisma.exam.create({ data: data as Parameters<typeof prisma.exam.create>[0]["data"] });
 export const updateExam = (id: string, data: object) => prisma.exam.update({ where: { id }, data: data as Parameters<typeof prisma.exam.update>[0]["data"] });
 export const deleteExam = (id: string) => prisma.exam.delete({ where: { id } });
+export const deleteSubject = (id: string) => prisma.subject.delete({ where: { id } });
 
 export async function addQuestion(examSlug: string, data: object) {
   const exam = await prisma.exam.findUnique({ where: { slug: examSlug } });

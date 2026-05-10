@@ -175,7 +175,7 @@ export default function ResultSummary({
                   "flex flex-col items-center rounded-xl p-4 transition-all",
                   item.className,
                   isActive && item.selectedClass,
-                  onFilterChange && "hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-400"
+                  onFilterChange != null && "hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-400"
                 )}
               >
                 {item.icon}

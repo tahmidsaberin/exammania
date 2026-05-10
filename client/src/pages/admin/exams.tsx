@@ -35,7 +35,7 @@ const AdminExamsPage: NextPage = () => {
   const [importSlug, setImportSlug] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const { data: divisions } = useSWR<Division[]>("divisions", divisionsApi.list);
+  const { data: divisions } = useSWR<Division[]>("divisions", () => divisionsApi.list());
   const [subjectError, setSubjectError] = useState<string | null>(null);
   const { data: subjects } = useSWR<Subject[]>("admin/subjects", adminApi.subjects, {
     onError: (err) => setSubjectError(err instanceof Error ? err.message : "Failed to load subjects"),

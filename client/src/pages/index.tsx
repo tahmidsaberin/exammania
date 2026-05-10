@@ -2,20 +2,15 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
 import { ClockIcon, ChartBarIcon, AcademicCapIcon } from "@heroicons/react/24/outline";
 import Layout from "@/components/Layout";
-import DivisionCard from "@/components/DivisionCard";
-import { SkeletonCard } from "@/components/ui";
-import { divisionsApi } from "@/lib/api";
-import type { Division } from "@/types";
 
 const Home: NextPage = () => {
   const { t } = useTranslation();
-  const { data: divisions, isLoading } = useSWR<Division[]>(
-    "divisions",
-    divisionsApi.list
-  );
+  const levels = [
+    { slug: "ssc", title: t("landing.ssc"), description: t("landing.sscDesc"), color: "from-sky-500 to-cyan-500" },
+    { slug: "hsc", title: t("landing.hsc"), description: t("landing.hscDesc"), color: "from-violet-500 to-purple-500" },
+  ];
 
   const features = [
     {
@@ -61,7 +56,7 @@ const Home: NextPage = () => {
           </p>
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
-              href="/divisions"
+              href="/levels"
               className="rounded-xl bg-white px-8 py-3 text-base font-bold text-primary-700 shadow-lg hover:bg-primary-50 transition-colors focus:outline-none focus:ring-4 focus:ring-white/40"
             >
               {t("landing.cta")}
@@ -110,24 +105,36 @@ const Home: NextPage = () => {
         </div>
       </section>
 
-      {/* Divisions */}
+      {/* Academic levels */}
       <section
         className="bg-gray-50 py-20 dark:bg-gray-950"
-        aria-labelledby="divisions-heading"
+        aria-labelledby="levels-heading"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2
-            id="divisions-heading"
+            id="levels-heading"
             className="mb-10 text-center text-3xl font-bold text-gray-900 dark:text-white"
           >
-            {t("landing.divisionsTitle")}
+            {t("landing.levelsTitle")}
           </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {isLoading
-              ? [1, 2, 3].map((i) => <SkeletonCard key={i} />)
-              : divisions?.map((div) => (
-                  <DivisionCard key={div.id} division={div} />
-                ))}
+          <div className="grid gap-6 md:grid-cols-2">
+            {levels.map((level) => (
+              <Link
+                key={level.slug}
+                href={`/levels/${level.slug}`}
+                className={`group relative overflow-hidden rounded-3xl bg-gradient-to-br px-8 py-12 text-white shadow-xl shadow-black/10 transition-all duration-200 ${level.color} hover:scale-[1.02] hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-white/40`}
+                aria-label={`Choose ${level.title}`}
+              >
+                <span className="mb-5 block text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+                  {t("landing.level")}
+                </span>
+                <h3 className="text-4xl font-extrabold tracking-tight">{level.title}</h3>
+                <p className="mt-4 max-w-xl text-lg text-white/90">{level.description}</p>
+                <div className="mt-8 inline-flex rounded-full bg-white/20 px-4 py-2 text-sm font-semibold text-white/90">
+                  {t("landing.start")}
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

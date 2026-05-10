@@ -12,7 +12,7 @@ const DivisionsPage: NextPage = () => {
   const { t } = useTranslation();
   const { data: divisions, isLoading, error } = useSWR<Division[]>(
     "divisions",
-    divisionsApi.list
+    () => divisionsApi.list()
   );
 
   return (

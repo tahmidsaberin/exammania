@@ -97,8 +97,8 @@ usersRouter.get("/:id/history", async (req: AuthRequest, res: Response) => {
 export const adminRouter = Router();
 adminRouter.use(authenticate, requireAdmin);
 
-const divSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional() });
-const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional() });
+const divSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), level: z.enum(["SSC", "HSC"]) });
+const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional(), level: z.enum(["SSC", "HSC"]).optional() });
 const examSchema = z.object({
   title: z.string().min(1),
   titlebn: z.string().optional(),
@@ -137,6 +137,7 @@ adminRouter.delete("/divisions/:id", async (req: AuthRequest, res: Response) => 
 
 adminRouter.post("/subjects", async (req: AuthRequest, res: Response) => { const d = subSchema.parse(req.body); const s = await adminSvc.createSubject(d); await adminSvc.auditLog(req.user!.id, "CREATE", "Subject", s.id); res.status(201).json({ success: true, data: s }); });
 adminRouter.put("/subjects/:id", async (req: AuthRequest, res: Response) => { const d = subSchema.partial().parse(req.body); const s = await adminSvc.updateSubject(req.params.id, d); await adminSvc.auditLog(req.user!.id, "UPDATE", "Subject", req.params.id); res.json({ success: true, data: s }); });
+adminRouter.delete("/subjects/:id", async (req: AuthRequest, res: Response) => { await adminSvc.deleteSubject(req.params.id); await adminSvc.auditLog(req.user!.id, "DELETE", "Subject", req.params.id); res.json({ success: true }); });
 
 adminRouter.post("/exams", async (req: AuthRequest, res: Response) => { const d = examSchema.parse(req.body); const e = await adminSvc.createExam(d); await adminSvc.auditLog(req.user!.id, "CREATE", "Exam", (e as { id: string }).id); res.status(201).json({ success: true, data: e }); });
 adminRouter.put("/exams/:id", async (req: AuthRequest, res: Response) => { const d = examSchema.partial().parse(req.body); const e = await adminSvc.updateExam(req.params.id, d); await adminSvc.auditLog(req.user!.id, "UPDATE", "Exam", req.params.id); res.json({ success: true, data: e }); });

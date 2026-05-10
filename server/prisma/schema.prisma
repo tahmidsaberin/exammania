@@ -13,6 +13,11 @@ enum Role {
   ADMIN
 }
 
+enum AcademicLevel {
+  SSC
+  HSC
+}
+
 enum QuestionType {
   MCQ
   TRUE_FALSE
@@ -33,27 +38,29 @@ model User {
 }
 
 model Division {
-  id        String   @id @default(cuid())
-  slug      String   @unique
+  id        String        @id @default(cuid())
+  slug      String        @unique
   name      String
-  namebn    String   @default("") @map("name_bn")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  namebn    String        @default("") @map("name_bn")
+  level     AcademicLevel
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
   subjects  Subject[]
   exams     Exam[]
   @@map("divisions")
 }
 
 model Subject {
-  id         String    @id @default(cuid())
-  slug       String    @unique
+  id         String         @id @default(cuid())
+  slug       String         @unique
   name       String
-  namebn     String    @default("") @map("name_bn")
-  divisionId String?   @map("division_id")
-  isCommon   Boolean   @default(false) @map("is_common")
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
-  division   Division? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  namebn     String         @default("") @map("name_bn")
+  divisionId String?        @map("division_id")
+  level      AcademicLevel?
+  isCommon   Boolean        @default(false) @map("is_common")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+  division   Division?      @relation(fields: [divisionId], references: [id], onDelete: SetNull)
   exams      Exam[]
   @@map("subjects")
 }
