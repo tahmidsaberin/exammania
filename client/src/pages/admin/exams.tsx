@@ -46,8 +46,12 @@ const AdminExamsPage: NextPage = () => {
     user?.role === "ADMIN" ? "admin/exams" : null,
     adminApi.listExams,
     {
-      onError: () => {
-        toast.error("Failed to load exams.");
+      onError: (err) => {
+        if (err instanceof ApiError) {
+          toast.error(`Failed to load exams: ${err.message}`);
+        } else {
+          toast.error("Failed to load exams.");
+        }
       },
     }
   );
@@ -146,14 +150,20 @@ const AdminExamsPage: NextPage = () => {
   };
 
   const handleImport = async (slug: string) => {
+    const trimmedSlug = slug.trim();
+    if (!trimmedSlug) return toast.error("Enter a valid exam slug.");
     const file = fileRef.current?.files?.[0];
     if (!file) return toast.error("Select a CSV file first.");
     try {
-      const result = await adminApi.importCsv(slug, file);
-      toast.success(`Imported ${result.data?.imported ?? 0} questions!`);
+      const result = await adminApi.importCsv(trimmedSlug, file);
+      toast.success(`Imported ${result.imported ?? 0} questions!`);
       setImportSlug(null);
-    } catch {
-      toast.error("Import failed.");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        toast.error(`Import failed: ${err.message}`);
+      } else {
+        toast.error("Import failed.");
+      }
     }
   };
 

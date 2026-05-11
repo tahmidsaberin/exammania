@@ -85,16 +85,37 @@ export async function bulkImportQuestions(examSlug: string, csvContent: string) 
   let startOrder = exam.questions.length > 0 ? (exam.questions[0].order ?? 0) + 1 : 1;
 
   const questions = records.map((row, idx) => {
-    const type = row.type?.toUpperCase() as QuestionType;
+    const typeString = row.type?.toString().trim().toUpperCase() ?? "";
+    const type = typeString as QuestionType;
     if (!Object.values(QuestionType).includes(type)) throw new AppError(`Invalid type "${row.type}" at row ${idx + 1}`, 422);
+
+    const text = row.question?.toString().trim();
+    if (!text) throw new AppError(`Missing question text at row ${idx + 1}`, 422);
+
+    const options = row.options ? row.options.toString().split("|").map((o) => o.trim()).filter(Boolean) : undefined;
+    let correct = row.correct?.toString().trim() || null;
+
+    if (correct && options?.length && /^[0-9]+$/.test(correct)) {
+      const index = Number(correct);
+      if (index >= 0 && index < options.length) {
+        correct = options[index];
+      }
+    }
+
+    if (type === QuestionType.TRUE_FALSE && correct) {
+      const normalized = correct.toLowerCase();
+      if (normalized === "0" || normalized === "false") correct = "False";
+      else if (normalized === "1" || normalized === "true") correct = "True";
+    }
+
     return {
       examId: exam.id,
       order: startOrder++,
       type,
-      text: row.question,
-      options: row.options ? row.options.split("|").map((o) => o.trim()) : undefined,
-      correct: row.correct || null,
-      marks: parseInt(row.marks, 10) || 1,
+      text,
+      options,
+      correct,
+      marks: parseInt(row.marks?.toString() || "", 10) || 1,
     };
   });
 
