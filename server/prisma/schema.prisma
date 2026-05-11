@@ -58,6 +58,7 @@ model Subject {
   divisionId String?        @map("division_id")
   level      AcademicLevel?
   isCommon   Boolean        @default(false) @map("is_common")
+  color      String?
   createdAt  DateTime       @default(now()) @map("created_at")
   updatedAt  DateTime       @updatedAt @map("updated_at")
   division   Division?      @relation(fields: [divisionId], references: [id], onDelete: SetNull)

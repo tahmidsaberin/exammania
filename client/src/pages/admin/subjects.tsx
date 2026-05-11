@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTranslation } from "react-i18next";
 import useSWR, { mutate } from "swr";
+import clsx from "clsx";
 import Layout from "@/components/Layout";
 import { adminApi, divisionsApi, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -20,6 +21,7 @@ interface SubjectFormData {
   isCommon: boolean;
   divisionId?: string;
   level?: "SSC" | "HSC";
+  color?: "emerald" | "violet" | "blue" | "rose" | "amber";
 }
 
 const AdminSubjectsPage: NextPage = () => {
@@ -51,7 +53,7 @@ const AdminSubjectsPage: NextPage = () => {
 
   const openCreate = () => {
     setEditing(null);
-    reset({ slug: "", name: "", namebn: "", isCommon: true, divisionId: undefined, level: "SSC" });
+    reset({ slug: "", name: "", namebn: "", isCommon: true, divisionId: undefined, level: "SSC", color: "emerald" });
     setShowModal(true);
   };
 
@@ -64,6 +66,7 @@ const AdminSubjectsPage: NextPage = () => {
       isCommon: subject.isCommon,
       divisionId: subject.divisionId ?? undefined,
       level: subject.level ?? "SSC",
+      color: subject.color ?? "emerald",
     });
     setShowModal(true);
   };
@@ -80,6 +83,7 @@ const AdminSubjectsPage: NextPage = () => {
         name: data.name,
         namebn: data.namebn,
         isCommon: data.isCommon,
+        color: data.color,
       };
       if (data.isCommon) {
         payload.level = data.level;
@@ -148,20 +152,21 @@ const AdminSubjectsPage: NextPage = () => {
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Name</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Type</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Division / Level</th>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Color</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
                       <Skeleton className="h-6" />
                     </td>
                   </tr>
                 )}
                 {!isLoading && subjects?.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
                       {t("common.noResults")}
                     </td>
                   </tr>
@@ -177,6 +182,19 @@ const AdminSubjectsPage: NextPage = () => {
                       </td>
                       <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
                         {subject.isCommon ? subject.level : division?.name ?? "—"}
+                      </td>
+                      <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
+                        <span className={clsx(
+                          "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold text-white",
+                          subject.color === "violet" && "bg-violet-500",
+                          subject.color === "blue" && "bg-sky-500",
+                          subject.color === "rose" && "bg-rose-500",
+                          subject.color === "amber" && "bg-amber-500",
+                          subject.color === "emerald" && "bg-emerald-500",
+                          !subject.color && "bg-slate-500"
+                        )}>
+                          {subject.color ?? "default"}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
                         <div className="flex items-center gap-2">
@@ -292,6 +310,22 @@ const AdminSubjectsPage: NextPage = () => {
               </select>
             </div>
           )}
+          <div>
+            <label htmlFor="color" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Card color *
+            </label>
+            <select
+              id="color"
+              {...register("color", { required: true })}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+            >
+              <option value="emerald">Green gradient</option>
+              <option value="violet">Violet gradient</option>
+              <option value="blue">Blue gradient</option>
+              <option value="rose">Rose gradient</option>
+              <option value="amber">Amber gradient</option>
+            </select>
+          </div>
         </form>
       </Modal>
     </Layout>

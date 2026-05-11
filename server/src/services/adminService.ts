@@ -24,6 +24,7 @@ export const createSubject = async (data: {
   divisionId?: string;
   isCommon?: boolean;
   level?: AcademicLevel;
+  color?: string;
 }) => {
   const payload: Prisma.SubjectCreateInput = {
     slug: data.slug,
@@ -32,6 +33,7 @@ export const createSubject = async (data: {
     divisionId: data.divisionId,
     isCommon: data.isCommon,
     level: data.level,
+    color: data.color,
   } as Prisma.SubjectCreateInput;
 
   if (data.divisionId && !data.level) {
@@ -45,7 +47,7 @@ export const createSubject = async (data: {
 };
 export const updateSubject = async (
   id: string,
-  data: { divisionId?: string; isCommon?: boolean; level?: AcademicLevel; [key: string]: unknown }
+  data: { divisionId?: string; isCommon?: boolean; level?: AcademicLevel; color?: string; [key: string]: unknown }
 ) => {
   const payload = { ...data } as Prisma.SubjectUpdateInput;
   if (data.divisionId && data.level === undefined) {

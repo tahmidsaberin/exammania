@@ -98,7 +98,8 @@ export const adminRouter = Router();
 adminRouter.use(authenticate, requireAdmin);
 
 const divSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), level: z.enum(["SSC", "HSC"]) });
-const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional(), level: z.enum(["SSC", "HSC"]).optional() });
+const subjectColorSchema = z.enum(["emerald", "violet", "blue", "rose", "amber"]);
+const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional(), level: z.enum(["SSC", "HSC"]).optional(), color: subjectColorSchema.optional() });
 const examSchema = z.object({
   title: z.string().min(1),
   titlebn: z.string().optional(),
