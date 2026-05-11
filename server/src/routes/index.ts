@@ -97,9 +97,9 @@ usersRouter.get("/:id/history", async (req: AuthRequest, res: Response) => {
 export const adminRouter = Router();
 adminRouter.use(authenticate, requireAdmin);
 
-const divSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), level: z.enum(["SSC", "HSC"]) });
-const subjectColorSchema = z.enum(["emerald", "violet", "blue", "rose", "amber"]);
-const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional(), level: z.enum(["SSC", "HSC"]).optional(), color: subjectColorSchema.optional() });
+const colorSchema = z.enum(["emerald", "violet", "blue", "rose", "amber", "teal", "slate", "indigo", "fuchsia", "lime"]);
+const divSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), level: z.enum(["SSC", "HSC"]), color: colorSchema.optional() });
+const subSchema = z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), name: z.string().min(1), namebn: z.string().optional(), divisionId: z.string().optional(), isCommon: z.boolean().optional(), level: z.enum(["SSC", "HSC"]).optional(), color: colorSchema.optional() });
 const examSchema = z.object({
   title: z.string().min(1),
   titlebn: z.string().optional(),
@@ -126,6 +126,10 @@ const qSchema = z.object({ order: z.number().int().min(1), type: z.nativeEnum(Qu
 
 adminRouter.get("/analytics", async (_req, res) => { res.json({ success: true, data: await adminSvc.getAnalytics() }); });
 adminRouter.get("/users", async (_req, res) => { res.json({ success: true, data: await prisma.user.findMany({ orderBy: { createdAt: "desc" }, include: { _count: { select: { attempts: true } } } }) }); });
+adminRouter.get("/exams", async (_req, res) => {
+  const exams = await prisma.exam.findMany({ include: { subject: true }, orderBy: { createdAt: "desc" } });
+  res.json({ success: true, data: exams });
+});
 adminRouter.get("/subjects", async (_req, res) => {
   const subjects = await prisma.subject.findMany({ orderBy: [{ isCommon: "asc" }, { name: "asc" }] });
   res.json({ success: true, data: subjects });

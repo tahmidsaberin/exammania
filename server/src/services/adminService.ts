@@ -11,9 +11,9 @@ export async function auditLog(userId: string, action: string, entityType: strin
   logger.info(`[ADMIN] ${action}`, { userId, entityType, entityId });
 }
 
-export const createDivision = (data: { slug: string; name: string; namebn?: string; level: AcademicLevel }) =>
+export const createDivision = (data: { slug: string; name: string; namebn?: string; level: AcademicLevel; color?: string }) =>
   prisma.division.create({ data });
-export const updateDivision = (id: string, data: { name?: string; namebn?: string; level?: AcademicLevel }) =>
+export const updateDivision = (id: string, data: { name?: string; namebn?: string; level?: AcademicLevel; color?: string }) =>
   prisma.division.update({ where: { id }, data });
 export const deleteDivision = (id: string) => prisma.division.delete({ where: { id } });
 

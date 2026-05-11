@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { UserCircleIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Layout from "@/components/Layout";
 import { Badge } from "@/components/ui";
-import { adminHistoryApi } from "@/lib/api";
+import { adminHistoryApi, adminApi, divisionsApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import type { Attempt, Division, User } from "@/types";
 import ExamHistory from "@/components/ExamHistory";
@@ -31,18 +31,8 @@ const AdminStudentHistoryPage: NextPage = () => {
   // Fetch divisions for grouping
   const { data: divisions, isLoading: divLoading } = useSWR<Division[]>(
     "divisions",
-    () =>
-      fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/api/divisions`, {
-        credentials: "include",
-      })
-        .then((r) => r.json())
-        .then((j) => (j.data as Division[]) ?? [])
+    () => divisionsApi.list()
   );
-
-  // Fetch student profile from history (extract from first attempt)
-  const studentName = history?.[0]
-    ? "Student"
-    : "Student";
 
   const isLoading = histLoading || divLoading;
   const totalAttempts = history?.length ?? 0;
@@ -60,12 +50,7 @@ const AdminStudentHistoryPage: NextPage = () => {
   // Also fetch the user info from the users list
   const { data: allUsers } = useSWR<User[]>(
     adminUser?.role === "ADMIN" ? "admin/users-list" : null,
-    () =>
-      fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/api/admin/users`, {
-        credentials: "include",
-      })
-        .then((r) => r.json())
-        .then((j) => (j.data as User[]) ?? [])
+    () => adminApi.users()
   );
 
   const student = allUsers?.find((u) => u.id === userId);

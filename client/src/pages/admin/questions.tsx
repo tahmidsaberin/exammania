@@ -29,7 +29,7 @@ const AdminQuestionsPage: NextPage = () => {
   const { user } = useAuth();
   const [showCreate, setShowCreate] = useState(false);
   const { register, handleSubmit, watch, reset, formState: { isSubmitting } } =
-    useForm<QuestionFormData>({ defaultValues: { type: "MCQ", marks: 1, order: 1 } });
+    useForm<QuestionFormData>({ defaultValues: { type: "MCQ", marks: 1, order: 1, correct: "" } });
 
   const questionType = watch("type");
 
@@ -46,9 +46,11 @@ const AdminQuestionsPage: NextPage = () => {
   const onSubmit = async (data: QuestionFormData) => {
     try {
       const options =
-        data.type !== "SHORT_ANSWER"
-          ? [data.option0, data.option1, data.option2, data.option3].filter(Boolean)
-          : undefined;
+        data.type === "SHORT_ANSWER"
+          ? undefined
+          : data.type === "TRUE_FALSE"
+          ? ["True", "False"]
+          : [data.option0, data.option1, data.option2, data.option3].filter(Boolean);
 
       await adminApi.addQuestion(data.examSlug, {
         order: Number(data.order),

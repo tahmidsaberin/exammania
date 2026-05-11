@@ -3,8 +3,8 @@ export type QuestionType = "MCQ" | "TRUE_FALSE" | "SHORT_ANSWER";
 export type AcademicLevel = "SSC" | "HSC";
 
 export interface User { id: string; email: string; name: string; avatarUrl?: string | null; role: Role; createdAt?: string; }
-export interface Division { id: string; slug: string; name: string; namebn: string; level: AcademicLevel; _count?: { subjects: number; exams: number }; }
-export interface Subject { id: string; slug: string; name: string; namebn: string; divisionId?: string | null; level?: AcademicLevel | null; isCommon: boolean; color?: "emerald" | "violet" | "blue" | "rose" | "amber" | null; _count?: { exams: number }; }
+export interface Division { id: string; slug: string; name: string; namebn: string; level: AcademicLevel; color?: "emerald" | "violet" | "blue" | "rose" | "amber" | "teal" | "slate" | "indigo" | "fuchsia" | "lime" | null; _count?: { subjects: number; exams: number }; }
+export interface Subject { id: string; slug: string; name: string; namebn: string; divisionId?: string | null; level?: AcademicLevel | null; isCommon: boolean; color?: "emerald" | "violet" | "blue" | "rose" | "amber" | "teal" | "slate" | "indigo" | "fuchsia" | "lime" | null; _count?: { exams: number }; }
 export interface Question { id: string; examId?: string; order: number; type: QuestionType; text: string; options?: string[] | null; marks: number; correct?: string | null; }
 export interface Exam { id: string; slug: string; title: string; titlebn: string; timeLimitMin: number; randomize: boolean; published: boolean; divisionId?: string | null; subjectId: string; questions: Question[]; division?: Division | null; subject?: Subject; _count?: { questions: number; attempts: number }; }
 export interface AttemptAnswer { id: string; attemptId: string; questionId: string; answer?: string | null; isCorrect: boolean; marksAwarded: number; question?: Question; }

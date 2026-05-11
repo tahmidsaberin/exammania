@@ -43,6 +43,7 @@ model Division {
   name      String
   namebn    String        @default("") @map("name_bn")
   level     AcademicLevel
+  color     String?
   createdAt DateTime      @default(now()) @map("created_at")
   updatedAt DateTime      @updatedAt @map("updated_at")
   subjects  Subject[]

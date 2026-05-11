@@ -60,12 +60,20 @@ export const adminApi = {
   updateSubject: (id: string, data: unknown) => request<import("@/types").Subject>(`/api/admin/subjects/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteSubject: (id: string) => request<null>(`/api/admin/subjects/${id}`, { method: "DELETE" }),
   createExam: (data: unknown) => request<import("@/types").Exam>("/api/admin/exams", { method: "POST", body: JSON.stringify(data) }),
+  listExams: () => request<import("@/types").Exam[]>("/api/admin/exams"),
   updateExam: (id: string, data: unknown) => request<import("@/types").Exam>(`/api/admin/exams/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteExam: (id: string) => request<null>(`/api/admin/exams/${id}`, { method: "DELETE" }),
   addQuestion: (slug: string, data: unknown) => request<import("@/types").Question>(`/api/admin/exams/${slug}/questions`, { method: "POST", body: JSON.stringify(data) }),
   importCsv: (slug: string, file: File) => {
     const form = new FormData(); form.append("file", file);
-    return fetch(`${API_URL}/api/admin/exams/${slug}/import`, { method: "POST", credentials: "include", body: form }).then((r) => r.json());
+    return fetch(`${API_URL}/api/admin/exams/${slug}/import`, { method: "POST", credentials: "include", body: form })
+      .then(async (r) => {
+        const json = await r.json().catch(() => null);
+        if (!r.ok || !json?.success) {
+          throw new ApiError(json?.error ?? "CSV import failed", r.status);
+        }
+        return json.data;
+      });
   },
 };
 

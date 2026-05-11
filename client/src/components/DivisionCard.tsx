@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import type { Division } from "@/types";
+import { COLOR_GRADIENTS } from "@/lib/colors";
 
 const DIVISION_ICONS: Record<string, React.ElementType> = {
   science: BeakerIcon,
@@ -18,8 +19,8 @@ const DIVISION_ICONS: Record<string, React.ElementType> = {
 };
 
 const LEVEL_GRADIENTS: Record<string, string> = {
-  HSC: "from-emerald-500 via-lime-500 to-emerald-600 hover:from-emerald-600 hover:to-lime-600",
-  SSC: "from-violet-500 via-fuchsia-500 to-purple-500 hover:from-violet-600 hover:to-purple-600",
+  HSC: "from-emerald-600 via-lime-600 to-emerald-700 hover:from-emerald-700 hover:to-lime-700",
+  SSC: "from-violet-600 via-fuchsia-600 to-purple-700 hover:from-violet-700 hover:to-purple-700",
 };
 
 interface DivisionCardProps {
@@ -29,7 +30,7 @@ interface DivisionCardProps {
 export default function DivisionCard({ division }: DivisionCardProps) {
   const { i18n } = useTranslation();
   const Icon = DIVISION_ICONS[division.slug] ?? BookOpenIcon;
-  const gradient = LEVEL_GRADIENTS[division.level] ?? "from-gray-500 to-gray-600 hover:from-gray-500 hover:to-gray-600";
+  const gradient = division.color ? COLOR_GRADIENTS[division.color] : LEVEL_GRADIENTS[division.level];
   const displayName = i18n.language === "bn" && division.namebn ? division.namebn : division.name;
 
   return (

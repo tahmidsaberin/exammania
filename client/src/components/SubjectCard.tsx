@@ -7,14 +7,7 @@ import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import type { Subject } from "@/types";
 import { Badge } from "./ui";
-
-const SUBJECT_GRADIENTS: Record<string, string> = {
-  emerald: "from-emerald-500 via-lime-500 to-emerald-600",
-  violet: "from-violet-500 via-fuchsia-500 to-purple-500",
-  blue: "from-sky-500 via-indigo-500 to-blue-600",
-  rose: "from-rose-500 via-fuchsia-500 to-pink-600",
-  amber: "from-amber-500 via-orange-500 to-amber-600",
-};
+import { COLOR_GRADIENTS } from "@/lib/colors";
 
 interface SubjectCardProps {
   subject: Subject;
@@ -23,7 +16,7 @@ interface SubjectCardProps {
 export default function SubjectCard({ subject }: SubjectCardProps) {
   const { t, i18n } = useTranslation();
   const displayName = i18n.language === "bn" && subject.namebn ? subject.namebn : subject.name;
-  const gradient = SUBJECT_GRADIENTS[subject.color ?? "emerald"] ?? SUBJECT_GRADIENTS.emerald;
+  const gradient = COLOR_GRADIENTS[subject.color ?? "emerald"];
 
   return (
     <Link

@@ -12,6 +12,7 @@ import Layout from "@/components/Layout";
 import { adminApi, divisionsApi, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { Button, Modal, Skeleton, Badge } from "@/components/ui";
+import { COLOR_OPTIONS, COLOR_DISPLAY } from "@/lib/colors";
 import type { Division, Subject } from "@/types";
 
 interface SubjectFormData {
@@ -21,7 +22,7 @@ interface SubjectFormData {
   isCommon: boolean;
   divisionId?: string;
   level?: "SSC" | "HSC";
-  color?: "emerald" | "violet" | "blue" | "rose" | "amber";
+  color?: "emerald" | "violet" | "blue" | "rose" | "amber" | "teal" | "slate" | "indigo" | "fuchsia" | "lime";
 }
 
 const AdminSubjectsPage: NextPage = () => {
@@ -37,7 +38,7 @@ const AdminSubjectsPage: NextPage = () => {
   );
 
   const { register, handleSubmit, watch, reset, formState: { isSubmitting } } =
-    useForm<SubjectFormData>({ defaultValues: { isCommon: true, level: "SSC" } });
+    useForm<SubjectFormData>({ defaultValues: { isCommon: true, level: "SSC", color: "emerald" } });
 
   const isCommon = watch("isCommon");
 
@@ -191,9 +192,14 @@ const AdminSubjectsPage: NextPage = () => {
                           subject.color === "rose" && "bg-rose-500",
                           subject.color === "amber" && "bg-amber-500",
                           subject.color === "emerald" && "bg-emerald-500",
+                          subject.color === "teal" && "bg-teal-500",
+                          subject.color === "slate" && "bg-slate-500",
+                          subject.color === "indigo" && "bg-indigo-500",
+                          subject.color === "fuchsia" && "bg-fuchsia-500",
+                          subject.color === "lime" && "bg-lime-500",
                           !subject.color && "bg-slate-500"
                         )}>
-                          {subject.color ?? "default"}
+                          {subject.color ? COLOR_DISPLAY[subject.color] : "default"}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
@@ -311,20 +317,45 @@ const AdminSubjectsPage: NextPage = () => {
             </div>
           )}
           <div>
-            <label htmlFor="color" className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
               Card color *
-            </label>
-            <select
-              id="color"
-              {...register("color", { required: true })}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            >
-              <option value="emerald">Green gradient</option>
-              <option value="violet">Violet gradient</option>
-              <option value="blue">Blue gradient</option>
-              <option value="rose">Rose gradient</option>
-              <option value="amber">Amber gradient</option>
-            </select>
+            </p>
+            <fieldset className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {COLOR_OPTIONS.map((option) => (
+                <label
+                  key={option.value}
+                  className={clsx(
+                    "cursor-pointer rounded-2xl border p-3 text-center shadow-sm transition-all",
+                    "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900",
+                    "peer-checked:border-primary-600 peer-checked:ring-2 peer-checked:ring-primary-500",
+                    option.value === "emerald" && "text-white",
+                    option.value === "violet" && "text-white",
+                    option.value === "blue" && "text-white",
+                    option.value === "rose" && "text-white",
+                    option.value === "amber" && "text-white",
+                    option.value === "teal" && "text-white",
+                    option.value === "slate" && "text-white",
+                    option.value === "indigo" && "text-white",
+                    option.value === "fuchsia" && "text-white",
+                    option.value === "lime" && "text-white"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    value={option.value}
+                    {...register("color", { required: true })}
+                    className="sr-only peer"
+                  />
+                  <div className={clsx(
+                    "mb-2 h-16 rounded-xl bg-gradient-to-br px-2 py-2 text-xs font-semibold uppercase tracking-wide",
+                    option.gradient
+                  )}>
+                    {option.label}
+                  </div>
+                  <div className="text-xs">{COLOR_DISPLAY[option.value]}</div>
+                </label>
+              ))}
+            </fieldset>
           </div>
         </form>
       </Modal>

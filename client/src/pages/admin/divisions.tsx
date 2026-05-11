@@ -7,10 +7,12 @@ import toast from "react-hot-toast";
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTranslation } from "react-i18next";
 import useSWR, { mutate } from "swr";
+import clsx from "clsx";
 import Layout from "@/components/Layout";
 import { adminApi, divisionsApi, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { Button, Modal, Skeleton } from "@/components/ui";
+import { COLOR_OPTIONS, COLOR_DISPLAY } from "@/lib/colors";
 import type { Division } from "@/types";
 
 interface DivisionFormData {
@@ -18,6 +20,7 @@ interface DivisionFormData {
   name: string;
   namebn?: string;
   level: "SSC" | "HSC";
+  color?: "emerald" | "violet" | "blue" | "rose" | "amber" | "teal" | "slate" | "indigo" | "fuchsia" | "lime";
 }
 
 const AdminDivisionsPage: NextPage = () => {
@@ -32,7 +35,7 @@ const AdminDivisionsPage: NextPage = () => {
   );
 
   const { register, handleSubmit, reset, formState: { isSubmitting } } =
-    useForm<DivisionFormData>({ defaultValues: { level: "SSC" } });
+    useForm<DivisionFormData>({ defaultValues: { level: "SSC", color: "emerald" } });
 
   if (user?.role !== "ADMIN") {
     return (
@@ -46,13 +49,13 @@ const AdminDivisionsPage: NextPage = () => {
 
   const openCreate = () => {
     setEditing(null);
-    reset({ slug: "", name: "", namebn: "", level: "SSC" });
+    reset({ slug: "", name: "", namebn: "", level: "SSC", color: "emerald" });
     setShowModal(true);
   };
 
   const openEdit = (division: Division) => {
     setEditing(division);
-    reset({ slug: division.slug, name: division.name, namebn: division.namebn, level: division.level });
+    reset({ slug: division.slug, name: division.name, namebn: division.namebn, level: division.level, color: division.color ?? "emerald" });
     setShowModal(true);
   };
 
@@ -117,6 +120,7 @@ const AdminDivisionsPage: NextPage = () => {
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Slug</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Name</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Level</th>
+                  <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Color</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Subjects</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Exams</th>
                   <th className="px-6 py-3 text-left font-semibold text-gray-900 dark:text-white">Actions</th>
@@ -142,6 +146,24 @@ const AdminDivisionsPage: NextPage = () => {
                     <td className="px-6 py-4 font-mono text-xs text-gray-600 dark:text-gray-300">{division.slug}</td>
                     <td className="px-6 py-4 text-gray-900 dark:text-white">{division.name}</td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{division.level}</td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
+                      <span className={clsx(
+                        "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold text-white",
+                        division.color === "violet" && "bg-violet-500",
+                        division.color === "blue" && "bg-sky-500",
+                        division.color === "rose" && "bg-rose-500",
+                        division.color === "amber" && "bg-amber-500",
+                        division.color === "emerald" && "bg-emerald-500",
+                        division.color === "teal" && "bg-teal-500",
+                        division.color === "slate" && "bg-slate-500",
+                        division.color === "indigo" && "bg-indigo-500",
+                        division.color === "fuchsia" && "bg-fuchsia-500",
+                        division.color === "lime" && "bg-lime-500",
+                        !division.color && "bg-slate-500"
+                      )}>
+                        {division.color ?? "default"}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{division._count?.subjects ?? 0}</td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{division._count?.exams ?? 0}</td>
                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
@@ -230,6 +252,47 @@ const AdminDivisionsPage: NextPage = () => {
               <option value="SSC">SSC</option>
               <option value="HSC">HSC</option>
             </select>
+          </div>
+          <div>
+            <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+              Card color *
+            </p>
+            <fieldset className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {COLOR_OPTIONS.map((option) => (
+                <label
+                  key={option.value}
+                  className={clsx(
+                    "cursor-pointer rounded-2xl border p-3 text-center shadow-sm transition-all",
+                    "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900",
+                    "peer-checked:border-primary-600 peer-checked:ring-2 peer-checked:ring-primary-500",
+                    option.value === "emerald" && "text-white",
+                    option.value === "violet" && "text-white",
+                    option.value === "blue" && "text-white",
+                    option.value === "rose" && "text-white",
+                    option.value === "amber" && "text-white",
+                    option.value === "teal" && "text-white",
+                    option.value === "slate" && "text-white",
+                    option.value === "indigo" && "text-white",
+                    option.value === "fuchsia" && "text-white",
+                    option.value === "lime" && "text-white"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    value={option.value}
+                    {...register("color", { required: true })}
+                    className="sr-only peer"
+                  />
+                  <div className={clsx(
+                    "mb-2 h-16 rounded-xl bg-gradient-to-br px-2 py-2 text-xs font-semibold uppercase tracking-wide",
+                    option.gradient
+                  )}>
+                    {option.label}
+                  </div>
+                  <div className="text-xs">{COLOR_DISPLAY[option.value]}</div>
+                </label>
+              ))}
+            </fieldset>
           </div>
         </form>
       </Modal>
