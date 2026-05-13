@@ -145,6 +145,7 @@ export default function ResultSummary({
               title: t("result.correct"),
               count: correct,
               icon: <CheckCircleIcon className="h-8 w-8 text-green-500" aria-hidden="true" />,
+              colorTheme: "green" as const,
               selectedClass: "ring-2 ring-green-500/40",
             },
             {
@@ -152,6 +153,7 @@ export default function ResultSummary({
               title: t("result.incorrect"),
               count: wrong,
               icon: <XCircleIcon className="h-8 w-8 text-red-500" aria-hidden="true" />,
+              colorTheme: "red" as const,
               selectedClass: "ring-2 ring-red-500/40",
             },
             {
@@ -159,7 +161,8 @@ export default function ResultSummary({
               title: t("result.unanswered"),
               count: unanswered,
               icon: <MinusCircleIcon className="h-8 w-8 text-gray-400" aria-hidden="true" />,
-              selectedClass: "ring-2 ring-slate-400/40",
+              colorTheme: "yellow" as const,
+              selectedClass: "ring-2 ring-yellow-400/40",
             },
           ].map((item) => {
             const isActive = selectedFilter === item.key;
@@ -169,27 +172,40 @@ export default function ResultSummary({
                 key={item.key}
                 onClick={() => onFilterChange(item.key === selectedFilter ? "all" : item.key)}
                 className={clsx(
-                  "button-30 flex flex-col items-center rounded-xl p-4 transition-all",
-                  isActive && item.selectedClass,
-                  onFilterChange != null && "hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-400"
-                )}
-              >
-                {item.icon}
-                <span className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{item.count}</span>
-                <span className="text-xs text-gray-500 dark:text-gray-300">{item.title}</span>
-              </button>
-            ) : (
-              <div
-                key={item.key}
-                className={clsx(
-                  "button-30 flex flex-col items-center rounded-xl p-4 cursor-default",
+                  "button-82-pushable flex flex-col items-center",
                   isActive && item.selectedClass
                 )}
               >
-                {item.icon}
-                <span className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{item.count}</span>
-                <span className="text-xs text-gray-500 dark:text-gray-300">{item.title}</span>
-              </div>
+                <span className="button-82-shadow"></span>
+                <span className={clsx("button-82-edge", item.colorTheme)}></span>
+                <span className={clsx("button-82-front flex flex-col items-center justify-center gap-2", item.colorTheme)}>
+                  {item.icon}
+                  <div>
+                    <div className="text-2xl font-bold">{item.count}</div>
+                    <div className="text-xs">{item.title}</div>
+                  </div>
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                key={item.key}
+                disabled
+                className={clsx(
+                  "button-82-pushable flex flex-col items-center",
+                  isActive && item.selectedClass
+                )}
+              >
+                <span className="button-82-shadow"></span>
+                <span className={clsx("button-82-edge", item.colorTheme)}></span>
+                <span className={clsx("button-82-front flex flex-col items-center justify-center gap-2", item.colorTheme)}>
+                  {item.icon}
+                  <div>
+                    <div className="text-2xl font-bold">{item.count}</div>
+                    <div className="text-xs">{item.title}</div>
+                  </div>
+                </span>
+              </button>
             );
             return Card;
           })}
