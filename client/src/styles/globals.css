@@ -35,7 +35,7 @@
   .button-29 {
     align-items: center;
     appearance: none;
-    background-image: radial-gradient(100% 100% at 100% 0, #4756ff 0, #1833ff 100%);
+    background-image: radial-gradient(100% 100% at 100% 0, #6cddff 0, #00297d 100%);
     border: 0;
     border-radius: 6px;
     box-shadow: rgba(45, 35, 66, .4) 0 2px 4px, rgba(45, 35, 66, .3) 0 7px 13px -3px, rgba(58, 65, 111, .5) 0 -3px 0 inset;
@@ -60,7 +60,7 @@
     touch-action: manipulation;
     white-space: nowrap;
     will-change: box-shadow, transform;
-    font-size: 18px;
+    font-size: 22px;
   }
 
   .button-29:focus {
@@ -249,15 +249,15 @@
   }
 
   .button-82-front.green {
-    background: hsl(133deg 72% 52%);
+    background: #006416;
   }
 
   .button-82-front.red {
-    background: hsl(348deg 83% 58%);
+    background: #84001b;
   }
 
   .button-82-front.yellow {
-    background: hsl(38deg 92% 54%);
+    background: #955e00;
   }
 
   @media (min-width: 768px) {
