@@ -49,7 +49,7 @@ export default function QuestionCard({
             <legend className="sr-only">Choose your answer</legend>
             <div className="space-y-3">
               {(question.options as string[]).map((opt, idx) => {
-                const val = String(idx);
+                const val = opt;
                 const isSelected = answer === val;
                 const isCorrectOption = showResult && correctAnswer === val;
                 const isSelectedIncorrect = isSelected && !isCorrectOption && showResult;
