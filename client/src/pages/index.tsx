@@ -57,13 +57,13 @@ const Home: NextPage = () => {
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
               href="/levels"
-              className="rounded-xl bg-white px-8 py-3 text-base font-bold text-primary-700 shadow-lg hover:bg-primary-50 transition-colors focus:outline-none focus:ring-4 focus:ring-white/40"
+              className="button-29 w-full sm:w-auto"
             >
               {t("landing.cta")}
             </Link>
             <Link
               href="/auth/signin"
-              className="rounded-xl border-2 border-white/40 px-8 py-3 text-base font-bold text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-4 focus:ring-white/40"
+              className="button-29 w-full sm:w-auto"
             >
               {t("nav.signIn")}
             </Link>

@@ -21,6 +21,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csv-parse": "^5.5.6",
+    "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "express-rate-limit": "^7.3.1",
     "google-auth-library": "^9.10.0",
@@ -56,5 +57,7 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
   },
-  "prisma": { "seed": "ts-node prisma/seed.ts" }
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
 }

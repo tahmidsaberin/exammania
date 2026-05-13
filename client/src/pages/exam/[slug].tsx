@@ -29,7 +29,7 @@ const ExamPage: NextPage = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [started, setStarted] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const pendingSavePromisesRef = useRef<Map<string, Promise<unknown>>>(new Map());
 
   const { data: exam, isLoading } = useSWR(
     slug ? `exam/${slug}` : null,
@@ -64,12 +64,15 @@ const ExamPage: NextPage = () => {
     (questionId: string, answer: string) => {
       setAnswers((prev) => ({ ...prev, [questionId]: answer }));
 
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = setTimeout(() => {
-        if (attemptId) {
-          attemptsApi.save(attemptId, questionId, answer).catch(() => {});
-        }
-      }, 800);
+      if (!attemptId) return;
+      const savePromise = attemptsApi
+        .save(attemptId, questionId, answer)
+        .catch(() => {})
+        .finally(() => {
+          pendingSavePromisesRef.current.delete(questionId);
+        });
+
+      pendingSavePromisesRef.current.set(questionId, savePromise);
     },
     [attemptId]
   );
@@ -81,6 +84,7 @@ const ExamPage: NextPage = () => {
     setSubmitting(true);
     setShowConfirm(false);
     try {
+      await Promise.all(pendingSavePromisesRef.current.values());
       await attemptsApi.submit(attemptId);
       router.push(`/result/${attemptId}`);
     } catch {

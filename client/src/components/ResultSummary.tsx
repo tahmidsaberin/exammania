@@ -115,8 +115,8 @@ export default function ResultSummary({
         <div className="mb-6 flex items-center gap-6">
           <div
             className={clsx(
-              "flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full text-3xl font-black text-white",
-              pct >= 75 ? "bg-green-500" : pct >= 50 ? "bg-yellow-400" : "bg-red-500"
+              "result-percentage-badge",
+              pct >= 75 ? "green" : pct >= 50 ? "yellow" : "red"
             )}
             aria-label={`Score: ${pct}%`}
           >
@@ -145,7 +145,6 @@ export default function ResultSummary({
               title: t("result.correct"),
               count: correct,
               icon: <CheckCircleIcon className="h-8 w-8 text-green-500" aria-hidden="true" />,
-              className: "bg-green-50 dark:bg-green-900/20",
               selectedClass: "ring-2 ring-green-500/40",
             },
             {
@@ -153,7 +152,6 @@ export default function ResultSummary({
               title: t("result.incorrect"),
               count: wrong,
               icon: <XCircleIcon className="h-8 w-8 text-red-500" aria-hidden="true" />,
-              className: "bg-red-50 dark:bg-red-900/20",
               selectedClass: "ring-2 ring-red-500/40",
             },
             {
@@ -161,7 +159,6 @@ export default function ResultSummary({
               title: t("result.unanswered"),
               count: unanswered,
               icon: <MinusCircleIcon className="h-8 w-8 text-gray-400" aria-hidden="true" />,
-              className: "bg-gray-50 dark:bg-gray-700/50",
               selectedClass: "ring-2 ring-slate-400/40",
             },
           ].map((item) => {
@@ -172,8 +169,7 @@ export default function ResultSummary({
                 key={item.key}
                 onClick={() => onFilterChange(item.key === selectedFilter ? "all" : item.key)}
                 className={clsx(
-                  "flex flex-col items-center rounded-xl p-4 transition-all",
-                  item.className,
+                  "button-30 flex flex-col items-center rounded-xl p-4 transition-all",
                   isActive && item.selectedClass,
                   onFilterChange != null && "hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-400"
                 )}
@@ -186,8 +182,8 @@ export default function ResultSummary({
               <div
                 key={item.key}
                 className={clsx(
-                  "flex flex-col items-center rounded-xl p-4",
-                  item.className
+                  "button-30 flex flex-col items-center rounded-xl p-4 cursor-default",
+                  isActive && item.selectedClass
                 )}
               >
                 {item.icon}

@@ -105,31 +105,31 @@ const AdminPage: NextPage = () => {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/admin/divisions"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="button-29 text-sm"
             >
               {t("admin.divisions")}
             </Link>
             <Link
               href="/admin/subjects"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="button-29 text-sm"
             >
               {t("admin.subjects")}
             </Link>
             <Link
               href="/admin/exams"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="button-29 text-sm"
             >
               {t("admin.exams")}
             </Link>
             <Link
               href="/admin/questions"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="button-29 text-sm"
             >
               {t("admin.questions")}
             </Link>
             <Link
               href="/admin/users"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="button-29 text-sm"
             >
               {t("admin.users")}
             </Link>

@@ -51,23 +51,23 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/"
-            className="text-sm font-medium text-gray-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400 transition-colors"
+            className="button-29 text-sm"
           >
             {t("nav.home")}
           </Link>
           <Link
             href="/divisions"
-            className="text-sm font-medium text-gray-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400 transition-colors"
+            className="button-29 text-sm"
           >
             {t("nav.divisions")}
           </Link>
           {user?.role === "ADMIN" && (
             <Link
               href="/admin"
-              className="text-sm font-medium text-primary-600 dark:text-primary-400"
+              className="button-29 text-sm"
             >
               {t("nav.admin")}
             </Link>
@@ -79,7 +79,7 @@ export default function Navbar() {
           {/* Language toggle */}
           <button
             onClick={toggleLang}
-            className="rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+            className="button-29 text-sm"
             aria-label="Toggle language"
           >
             {t("nav.language")}
